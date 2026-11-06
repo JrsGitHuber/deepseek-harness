@@ -125,7 +125,8 @@ function HeroFish({ hovering }: { hovering: boolean }) {
 }
 
 /**
- * Render the hero chrome (headline only; no composer, no workspace row).
+ * Render the hero chrome (headline only; no composer, no workspace row). An occupant of
+ * `conversation.hero.headline` replaces the whole headline row, including the brand mark and badge.
  * @param props - see {@link HeroShellProps}.
  * @returns the centered hero element tree.
  */
@@ -134,28 +135,32 @@ export function HeroShell({ t, renderSlot, children }: HeroShellProps) {
   return (
     <div className={css.root}>
       <div className={css.stack}>
-        <div className={css.headline}>
-          {/* figma 34:10412: fish 34×25 leading the headline, gap 10. */}
-          <span
-            className={css.fishHitbox}
-            onPointerEnter={(event) => {
-              if (event.pointerType !== 'touch'
-                && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
-                setHovering(true)
-              }
-            }}
-            onPointerLeave={() => { setHovering(false) }}
-          >
-            {renderSlot('conversation.hero.brand.mark', { size: 34, className: css.fish }, {
-              fallback: <HeroFish hovering={hovering} />,
-            })}
-          </span>
-          <span className={css.titleGroup}>
-            {/* Own element: keeps the headline text addressable apart from the badge. */}
-            <span>{t('hero.headline')}</span>
-            <span className={css.previewBadge}>{t('hero.preview')}</span>
-          </span>
-        </div>
+        {renderSlot('conversation.hero.headline', {}, {
+          fallback: (
+            <div className={css.headline}>
+              {/* figma 34:10412: fish 34×25 leading the headline, gap 10. */}
+              <span
+                className={css.fishHitbox}
+                onPointerEnter={(event) => {
+                  if (event.pointerType !== 'touch'
+                    && window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
+                    setHovering(true)
+                  }
+                }}
+                onPointerLeave={() => { setHovering(false) }}
+              >
+                {renderSlot('conversation.hero.brand.mark', { size: 34, className: css.fish }, {
+                  fallback: <HeroFish hovering={hovering} />,
+                })}
+              </span>
+              <span className={css.titleGroup}>
+                {/* Own element: keeps the headline text addressable apart from the badge. */}
+                <span>{t('hero.headline')}</span>
+                <span className={css.previewBadge}>{t('hero.preview')}</span>
+              </span>
+            </div>
+          ),
+        })}
         <div className={css.body}>
           {/* The composer remains mounted outside this component. */}
         </div>
